@@ -7,24 +7,14 @@ from WaterMark import*
 
 class WaterMarker:
 
-    def __init__(self, x, y, mark, fileToWrite, fileToRead):
-	
+    def __init__(self, fileToWrite, fileToRead):
 	self.fileToWrite = fileToWrite
-	self.mark = mark
-	self.x = x
-	self.y = y
-	self.packet = StringIO.StringIO()
-	self.canvas = canvas.Canvas(self.packet, pagesize = letter)
 	self.blankSheet = PdfFileReader(file(fileToRead, "rb"))
-	
 
-    def writeAndMerge(self):
-	self.canvas.drawString(self.x, self.y, self.mark)
-	self.canvas.save()
 
-	self.packet.seek(0)
-	newSheet = PdfFileReader(self.packet)
-	
+
+    def merge(self, newSheet):
+
 	output = PdfFileWriter()
 
 	page = self.blankSheet.getPage(0)
@@ -33,14 +23,15 @@ class WaterMarker:
 
 	output.addPage(page)
 
-	outputStream = file("New 2404.pdf", "wb")
+	outputStream = file(self.fileToWrite, "wb")
 	output.write(outputStream)
 	outputStream.close()
-	
- 
-WM = WaterMark("Suck it Nerds", 10, 10)
+
+WM = WaterMark("Suck it nerd", 40, 688)
+W2 = WaterMark("Eat My Shorts", 40, 712)
+
+w = WaterMarker("Destination.pdf", "2404.pdf")
 
 
-marker = WaterMarker(WM.getLocation("X"), WM.getLocation("Y"), WM.getMark(), "Destination.pdf", "2404.pdf")
-
-marker.writeAndMerge()
+w.merge(WM.writeMark())
+w.merge(W2.writeMark())
